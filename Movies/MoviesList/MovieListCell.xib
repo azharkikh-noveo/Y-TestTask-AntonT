@@ -19,7 +19,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="120" height="150"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="120" id="fm2-VJ-Yxg"/>
-                            <constraint firstAttribute="height" constant="150" id="wHw-bW-WlL"/>
+                            <constraint firstAttribute="height" priority="999" constant="150" id="wHw-bW-WlL"/>
                         </constraints>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="1964" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lrd-NU-gNK">
