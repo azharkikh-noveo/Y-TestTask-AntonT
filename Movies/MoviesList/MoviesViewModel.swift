@@ -37,15 +37,21 @@ final class MoviesViewModel: MoviesViewModelProtocol {
     let selectedItem: AnyObserver<MoviesListCellType>
     let prefetchRows: AnyObserver<[IndexPath]>
 
-    private let dependencies: MoviesViewModelDependencies
+    private let moviesService: Single<MoviesServiceProtocol>
+    private let imageUrlBuilder: Single<ImageUrlBuilderProtocol>
     private let disposeBag = DisposeBag()
 
-    init(dependencies: MoviesViewModelDependencies) {
-        self.dependencies = dependencies
+    convenience init(dependencies: MoviesViewModelDependencies) {
+        self.init(moviesService: dependencies.moviesService, imageUrlBuilder: dependencies.imageUrlBuilder)
+    }
+
+    init(moviesService: Single<MoviesServiceProtocol>, imageUrlBuilder: Single<ImageUrlBuilderProtocol>) {
+        self.moviesService = moviesService
+        self.imageUrlBuilder = imageUrlBuilder
 
         let loadNextItemTrigger = PublishSubject<Void>()
 
-        let initialResponse = dependencies.moviesService.flatMap { $0.moviesList() }
+        let initialResponse = moviesService.flatMap { $0.moviesList() }
 
         let pagesCount = initialResponse.map { $0.totalPages ?? Constants.defaultPagesCount }
 
@@ -60,7 +66,7 @@ final class MoviesViewModel: MoviesViewModelProtocol {
 
         let morePages = currentPage.compactMap { $0 }
             .flatMap { page in
-                dependencies.moviesService.flatMap { $0.moviesList(page: page) }
+                moviesService.flatMap { $0.moviesList(page: page) }
             }
             .compactMap(\.results)
             .scan([], accumulator: +)
@@ -115,6 +121,6 @@ final class MoviesViewModel: MoviesViewModelProtocol {
 
 extension MoviesViewModel {
     func movieCellViewModel(for item: MovieListItem) -> MovieListCellViewModelProtocol {
-        MovieListCellViewModel(movieListItem: item, dependencies: dependencies)
+        MovieListCellViewModel(movieListItem: item, imageUrlBuilder: imageUrlBuilder)
     }
 }

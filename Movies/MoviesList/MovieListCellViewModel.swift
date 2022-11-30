@@ -8,8 +8,6 @@
 import RxCocoa
 import RxSwift
 
-typealias MoviesListCellViewModelDependencies = ImageUrlBuilderProvider
-
 protocol MovieListCellViewModelProtocol {
     var imageURL: Driver<URL?> { get }
     var title: String { get }
@@ -21,10 +19,10 @@ final class MovieListCellViewModel: MovieListCellViewModelProtocol {
     let title: String
     let releaseYear: String?
 
-    init(movieListItem: MovieListItem, dependencies: MoviesListCellViewModelDependencies) {
+    init(movieListItem: MovieListItem, imageUrlBuilder: Single<ImageUrlBuilderProtocol>) {
         title = movieListItem.originalTitle
         releaseYear = DateFormatters.convertStringFromFullDateToYears(movieListItem.releaseDate)
-        imageURL = dependencies.imageUrlBuilder
+        imageURL = imageUrlBuilder
             .map { $0.thumbnailImageURL(for: movieListItem) }
             .asDriver(onErrorJustReturn: nil)
     }

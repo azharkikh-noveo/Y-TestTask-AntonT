@@ -31,11 +31,15 @@ final class MovieDetailViewModel: MovieDetailViewModelProtocol {
         errorText.map { $0 != nil }
     }
 
-    init(id: Int, dependencies: MovieDetailViewModelDependencies) {
-        let movie = dependencies.moviesService.flatMap { $0.movieDetails(by: id) }
+    convenience init(id: Int, dependencies: MovieDetailViewModelDependencies) {
+        self.init(id: id, moviesService: dependencies.moviesService, imageUrlBuilder: dependencies.imageUrlBuilder)
+    }
+
+    init(id: Int, moviesService: Single<MoviesServiceProtocol>, imageUrlBuilder: Single<ImageUrlBuilderProtocol>) {
+        let movie = moviesService.flatMap { $0.movieDetails(by: id) }
 
         imageURL = movie.asObservable()
-            .withLatestFrom(dependencies.imageUrlBuilder.asObservable()) { ($0, $1) }
+            .withLatestFrom(imageUrlBuilder.asObservable()) { ($0, $1) }
             .map { $1.posterUrl(for: $0) }
             .asDriver(onErrorJustReturn: nil)
 
